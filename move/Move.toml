@@ -1,0 +1,15 @@
+[package]
+name = "my_todo_list"
+version = "1.0.0"
+authors = []
+
+[addresses]
+todolist_addr='077f2658901381d71fc7782865d56bafa1e30154431cf3ab5938a8c76b20a6c6'
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-core.git"
+rev = "mainnet"
+subdir = "aptos-move/framework/aptos-framework"
+
+[dev-dependencies]
