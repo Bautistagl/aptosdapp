@@ -20,7 +20,7 @@ type Task = {
 export const aptos = new Aptos();
 // change this to be your module account address
 export const moduleAddress =
-  "077f2658901381d71fc7782865d56bafa1e30154431cf3ab5938a8c76b20a6c6";
+  "1898faf9c374277fcda3e0d35a3ae4cad58f1ffaee2ed0334703198e5bb3dcab";
 function App() {
   const { account, signAndSubmitTransaction } = useWallet();
   const [accountHasList, setAccountHasList] = useState<boolean>(false);
@@ -216,20 +216,80 @@ function App() {
         </Row>
       </Layout>
       <Spin spinning={transactionInProgress}>
-      {!accountHasList && (
-        <Row gutter={[0, 32]} style={{ marginTop: "2rem" }}>
-          <Col span={8} offset={8}>
-            <Button
-              onClick={addNewList}
-              block
-              type="primary"
-              style={{ height: "40px", backgroundColor: "#3f67ff" }}
+      {
+  !accountHasList ? (
+    <Row gutter={[0, 32]} style={{ marginTop: "2rem" }}>
+      <Col span={8} offset={8}>
+        <Button
+          disabled={!account}
+          block
+          onClick={()=>addNewList()}
+          type="primary"
+          style={{ height: "40px", backgroundColor: "#3f67ff" }}
+        >
+          Add new list
+        </Button>
+      </Col>
+    </Row>
+  ) : (
+    <Row gutter={[0, 32]} style={{ marginTop: "2rem" }}>
+         <Col span={8} offset={8}>
+      <Input.Group compact>
+      <Input
+  onChange={(event) => onWriteTask(event)} // add this
+  style={{ width: "calc(100% - 60px)" }}
+  placeholder="Add a Task"
+  size="large"
+  value={newTask} // add this
+/>
+<Button
+  onClick={onTaskAdded} // add this
+  type="primary"
+  style={{ height: "40px", backgroundColor: "#3f67ff" }}
+>
+  Add
+</Button>
+      </Input.Group>
+    </Col>
+      <Col span={8} offset={8}>
+        {tasks && (
+          <List
+            size="small"
+            bordered
+            dataSource={tasks}
+            renderItem={(task: any) => (
+              <List.Item
+              actions={[
+                <div>
+                  {task.completed ? (
+                    <Checkbox defaultChecked={true} disabled />
+                  ) : (
+                    <Checkbox
+                      onChange={(event) =>
+                        onCheckboxChange(event, task.task_id)
+                      }
+                    />
+                  )}
+                </div>,
+              ]}
             >
-              Add new list
-            </Button>
-          </Col>
-        </Row>
-      )}
+                <List.Item.Meta
+                  title={task.content}
+                  description={
+                    <a
+                      href={`https://explorer.aptoslabs.com/account/${task.address}/`}
+                      target="_blank"
+                    >{`${task.address.slice(0, 6)}...${task.address.slice(-5)}`}</a>
+                  }
+                />
+              </List.Item>
+            )}
+          />
+        )}
+      </Col>
+    </Row>
+  )}
+
     </Spin>
     </>
   );
