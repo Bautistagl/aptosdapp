@@ -20,7 +20,7 @@ type Task = {
 export const aptos = new Aptos();
 // change this to be your module account address
 export const moduleAddress =
-  "1898faf9c374277fcda3e0d35a3ae4cad58f1ffaee2ed0334703198e5bb3dcab";
+  "0xf2746b08221475db55856f9da2978846eab4f4792db7e42cc31e17b1fcb3a284";
 function App() {
   const { account, signAndSubmitTransaction } = useWallet();
   const [accountHasList, setAccountHasList] = useState<boolean>(false);
@@ -162,21 +162,20 @@ function App() {
 
   const fetchList = async () => {
     if (!account) return [];
+    console.log(account)
     try {
-      const  resources = await aptos.getAccountResources({
-        accountAddress: account?.address,
-       
-      });
-      const todoListResource = resources.find(
-        (r) => r.type === `${moduleAddress}::todolist::TodoList`
-      );
-      
+      const todoListResource = await aptos.getAccountResource(
+          {accountAddress:account?.address,
+            resourceType:`${moduleAddress}::todolist::TodoList`}
+        );
       setAccountHasList(true);
       // tasks table handle
       const tableHandle = (todoListResource as any).tasks.handle;
+      console.log("Table Handle:", tableHandle);
       // tasks table counter
       const taskCounter = (todoListResource as any).task_counter;
-
+      
+   
       let tasks = [];
       let counter = 1;
       while (counter <= taskCounter) {
@@ -185,10 +184,8 @@ function App() {
           value_type: `${moduleAddress}::todolist::Task`,
           key: `${counter}`,
         };
-        const task = await aptos.getTableItem<Task>({
-          handle: tableHandle,
-          data: tableItem,
-        });
+        
+        const task = await aptos.getTableItem<Task>({handle:tableHandle, data:tableItem});
         tasks.push(task);
         counter++;
       }
